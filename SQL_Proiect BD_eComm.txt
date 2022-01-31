@@ -1,0 +1,522 @@
+DROP TABLE  IF EXISTS "Sediu";
+DROP TABLE  IF EXISTS "Produse";
+DROP TABLE  IF EXISTS "Angajati";
+DROP TABLE  IF EXISTS "Clienti" ;
+DROP TABLE  IF EXISTS "Facturi" ;
+DROP TABLE  IF EXISTS "Comenzi";
+DROP TABLE  IF EXISTS "DetaliiComanda" ;
+
+CREATE TABLE Sediu
+(
+    CodSediu INT NOT NULL,
+    Localitate VARCHAR(120),
+	Telefon VARCHAR(24),
+	Adresa VARCHAR(70),
+	Tara VARCHAR(80),
+	CodPostal VARCHAR(10),
+    CONSTRAINT PK_Sediu PRIMARY KEY  (CodSediu)
+);
+
+CREATE TABLE Angajati
+(
+    CodAngajat INT NOT NULL,
+    Nume VARCHAR(50),
+	Prenume VARCHAR(50),
+	Email VARCHAR(60),
+	AreCaSef INT,
+	Functie VARCHAR(40),
+	CodSediu INT NOT NULL,
+    CONSTRAINT PK_Angajati PRIMARY KEY  (CodAngajat)
+);
+
+
+CREATE TABLE Clienti
+(
+    CodClient INT NOT NULL,
+    NumeClient VARCHAR(80),
+	PrenumeClient VARCHAR(70),
+	Telefon VARCHAR(24),
+	Adresa VARCHAR(60),
+	Localitate VARCHAR(40),
+	CodPostal VARCHAR(10),
+	Tara VARCHAR(40),
+	AngajatRaspunzator INT,
+    CONSTRAINT PK_Clienti PRIMARY KEY  (CodClient)
+);
+
+
+CREATE TABLE Facturi
+(
+    IdFactura INT NOT NULL,
+    CodClient INT NOT NULL, 
+	NumarCard INT,
+	DataFacturare TIMESTAMP NOT NULL,
+    CONSTRAINT PK_Facturi PRIMARY KEY  (IdFactura)
+);
+
+
+CREATE TABLE Comenzi
+(
+	NrComanda INT NOT NULL,
+	DataComanda TIMESTAMP NOT NULL,
+	Status VARCHAR(24),
+	IdFactura INT NOT NULL,
+	CONSTRAINT PK_Comenzi PRIMARY KEY (NrComanda)
+);
+
+
+CREATE TABLE DetaliiComanda
+(
+	NrComanda INT NOT NULL,
+	CodProdus INT NOT NULL,
+	Cantitate INT NOT NULL,
+	PretBucata INT NOT NULL, 
+	CONSTRAINT PK_DetaliiComanda PRIMARY KEY (NrComanda)
+
+);
+
+CREATE TABLE Produse 
+(
+	CodProdus INT NOT NULL,
+	NumeProdus VARCHAR(60),
+	CategorieProdus VARCHAR(24),
+	Furnizor VARCHAR(40),
+	CantitateStoc INT NOT NULL,
+	Pret INT NOT NULL,
+	CONSTRAINT PK_Poduse PRIMARY KEY (CodProdus)
+	
+	
+	
+);
+
+
+ALTER TABLE Angajati ADD CONSTRAINT FK_AngajatiCodSediu
+    FOREIGN KEY (CodSediu) REFERENCES Sediu (CodSediu) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+ALTER TABLE Angajati aDD CONSTRAINT FK_AngajatiAreCaSef
+    FOREIGN KEY (AreCaSef) REFERENCES Angajati(CodAngajat) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+ALTER TABLE Clienti ADD CONSTRAINT FK_ClientiAngRasp
+    FOREIGN KEY (AngajatRaspunzator) REFERENCES Angajati (CodAngajat) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+ALTER TABLE Facturi ADD CONSTRAINT FK_FacturiCodClient
+    FOREIGN KEY (CodClient) REFERENCES Clienti (CodClient) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+ALTER TABLE Comenzi ADD CONSTRAINT FK_ComenziIDFact
+    FOREIGN KEY (idFactura) REFERENCES Facturi (idFactura) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+ALTER TABLE DetaliiComanda ADD CONSTRAINT FK_DetaliiComandaCodProdus
+    FOREIGN KEY (CodProdus) REFERENCES Produse (CodProdus) ON DELETE NO ACTION ON UPDATE NO ACTION;
+	
+ALTER TABLE Produse ADD CONSTRAINT FK_DetaliiComandaCodProdus
+    FOREIGN KEY (CodProdus) REFERENCES Produse (CodProdus) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+
+INSERT INTO public.sediu(
+	codsediu, localitate, telefon, adresa, tara, codpostal)
+	VALUES (1, 'Cluj-Napoca', '0754999888', 'Strada Stejar Nr. 1' ,'Romania', '111222');
+INSERT INTO public.sediu(
+	codsediu, localitate, telefon, adresa, tara, codpostal)
+	VALUES (8, 'Bucuresti', '0745888999', 'Strada Ion Creanga Nr. 8' , 'Romania', '222333');
+INSERT INTO public.sediu(
+	codsediu, localitate, telefon, adresa, tara, codpostal)
+	VALUES (15, 'Iasi', '0723898988', 'Strada Vasile Lupu Nr. 15' , 'Romania', '333444');
+
+
+INSERT INTO Angajati (CodAngajat,Nume, Prenume, Email, AreCaSef, Functie, CodSediu) VALUES (1,'Oprea', 'Gina', 'opreag@gmail.com' ,1,'Manager - Level 3',1);
+INSERT INTO Angajati (CodAngajat,Nume, Prenume, Email, AreCaSef, Functie, CodSediu) VALUES (2,'Popescu', 'Ionel', 'ionp@gmail.com' ,1,'consultant',1);
+INSERT INTO Angajati (CodAngajat,Nume, Prenume, Email, AreCaSef, Functie, CodSediu) VALUES (3,'Rusu', 'Carina', 'rusu@gmail.com' ,1,'casier',1);
+INSERT INTO Angajati (CodAngajat,Nume, Prenume, Email, AreCaSef, Functie, CodSediu) VALUES (4,'Pascu', 'Laura', 'laura@gmail.com' ,1,'tehnician',1);
+INSERT INTO Angajati (CodAngajat,Nume, Prenume, Email, AreCaSef, Functie, CodSediu) VALUES (5,'Grigorescu', 'Silviu', 'silviu@gmail.com' ,1,'consultant',1);
+INSERT INTO Angajati (CodAngajat,Nume, Prenume, Email, AreCaSef, Functie, CodSediu) VALUES (6,'Popovici', 'Irina', 'irinapop@gmail.com' ,1,'casier',1);
+INSERT INTO Angajati (CodAngajat,Nume, Prenume, Email, AreCaSef, Functie, CodSediu) VALUES (7,'Popa', 'Marian', 'popa@gmail.com' ,1,'consultant',1);
+INSERT INTO public.angajati(
+	codangajat, nume, prenume, email, arecasef, functie, codsediu)
+	VALUES (8, 'Fartusnic', 'Paul', 'fa.pa@email.com', 1, 'Manager - Level 2', 8);
+INSERT INTO public.angajati(
+	codangajat, nume, prenume, email, arecasef, functie, codsediu)
+	VALUES (9, 'Ciobanu', 'Marius', 'ci.ma@email.com', 8, 'Tech support', 8);
+INSERT INTO public.angajati(
+	codangajat, nume, prenume, email, arecasef, functie, codsediu)
+	VALUES (10, 'Rusu', 'Stefan', 'ru.st@email.com', 8, 'Tech support', 8);
+INSERT INTO public.angajati(
+	codangajat, nume, prenume, email, arecasef, functie, codsediu)
+	VALUES (11, 'Drinceanu', 'Darius', 'dr.da@email.com', 8, 'Tech support', 8);
+INSERT INTO public.angajati(
+	codangajat, nume, prenume, email, arecasef, functie, codsediu)
+	VALUES (12, 'Goria', 'Daniel', 'go.da@email.com', 8, 'Tech support', 8);
+INSERT INTO public.angajati(
+	codangajat, nume, prenume, email, arecasef, functie, codsediu)
+	VALUES (13, 'Tarcan', 'Iustin', 'ta.iu@@email.com', 8, 'Tech support', 8);
+INSERT INTO public.angajati(
+	codangajat, nume, prenume, email, arecasef, functie, codsediu)
+	VALUES (14, 'Nica', 'Teodor', 'ni.te@email.com', 8, 'Tech support', 8);
+INSERT INTO Angajati (CodAngajat, Nume, Prenume, Email, AreCaSef, Functie, CodSediu) VALUES (15, 'Radu','Stefan','stefanradu99@gmail.com',8,'Manager - Level 1', 15);
+
+INSERT INTO Angajati (CodAngajat, Nume, Prenume, Email, AreCaSef, Functie, CodSediu) VALUES (16, 'Geanusu','Sorin','geanusu10@yahoo.com',15,'Tech Support', 15);
+
+INSERT INTO Angajati (CodAngajat, Nume, Prenume, Email, AreCaSef, Functie, CodSediu) VALUES (17, 'Porumbel','Alina','AlinaPorumbel@gmail.com',15,'Tech Support', 15);
+
+INSERT INTO Angajati (CodAngajat, Nume, Prenume, Email, AreCaSef, Functie, CodSediu) VALUES (18, 'Voineag','Sabina','SabinaVng23@gmail.com',15,'Tech Support', 15);
+
+INSERT INTO Angajati (CodAngajat, Nume, Prenume, Email, AreCaSef, Functie, CodSediu) VALUES (19, 'Parcu','Marius','mariusparculets@gmail.com',15,'Tech Support', 15);
+
+INSERT INTO Angajati (CodAngajat, Nume, Prenume, Email, AreCaSef, Functie, CodSediu) VALUES (20, 'Vraja','Dorin','vraja0820@yahoo.com',15,'Tech Support', 15);
+
+INSERT INTO Angajati (CodAngajat, Nume, Prenume, Email, AreCaSef, Functie, CodSediu) VALUES (21, 'Nighel','Ionut','nighel11@gmail.com',15,'Tech Support', 15);	
+
+INSERT INTO Clienti (CodClient,NumeClient, PrenumeClient, Telefon, Adresa, Localitate, CodPostal,Tara,AngajatRaspunzator) VALUES (1,'Lupu', 'Vasile', 0764538760 ,'Str Principala','Onesti',601081,'Romania',9);
+INSERT INTO Clienti (CodClient,NumeClient, PrenumeClient, Telefon, Adresa, Localitate, CodPostal,Tara,AngajatRaspunzator) VALUES (2,'Stoleriu','Ioana', 0760538760 ,'Str Principala','Onesti',601081,'Romania',10);
+INSERT INTO Clienti (CodClient,NumeClient, PrenumeClient, Telefon, Adresa, Localitate, CodPostal,Tara,AngajatRaspunzator) VALUES (3,'Pascariu', 'George', 0754538790 ,'Str Pietii','Ghimbav',507075,'Romania',11);
+INSERT INTO Clienti (CodClient,NumeClient, PrenumeClient, Telefon, Adresa, Localitate, CodPostal,Tara,AngajatRaspunzator) VALUES (4,'Lungu', 'Delia', 0744938761 ,'Str Principala','Bogdanesti',707500,'Romania',12);
+INSERT INTO Clienti (CodClient,NumeClient, PrenumeClient, Telefon, Adresa, Localitate, CodPostal,Tara,AngajatRaspunzator) VALUES (5,'Ursu', 'Maria', 0754537760 ,'Str Principala','Matca',807185,'Romania',13);
+INSERT INTO Clienti (CodClient,NumeClient, PrenumeClient, Telefon, Adresa, Localitate, CodPostal,Tara,AngajatRaspunzator) VALUES (6,'Rosu', 'Carina', 0754588763 ,'Str Principala','Bogdanesti',707500,'Romania',14);
+INSERT INTO Clienti (CodClient,NumeClient, PrenumeClient, Telefon, Adresa, Localitate, CodPostal,Tara,AngajatRaspunzator) VALUES (7,'Ionescu', 'Dan', 0764938060 ,'Str Calea Victoriei','Sebis',315700,'Romania',16);
+INSERT INTO public.clienti(
+	codclient, numeclient, prenumeclient, telefon, adresa, localitate, codpostal, tara, angajatraspunzator)
+	VALUES (8, 'Dobre', 'Alexandru', '0754111222', 'Strada Rosie Nr. 8', 'Iasi', '111888', 'Romania',17);
+INSERT INTO public.clienti(
+	codclient, numeclient, prenumeclient, telefon, adresa, localitate, codpostal, tara, angajatraspunzator)
+	VALUES (9, 'Popescu', 'Andreea', '0754222222', 'Strada Verde Nr. 9', 'Craiova', '111999', 'Romania', 18);
+INSERT INTO public.clienti(
+	codclient, numeclient, prenumeclient, telefon, adresa, localitate, codpostal, tara, angajatraspunzator)
+	VALUES (10, 'Ionita', 'Pavel', '0754333222', 'Strada Galbena Nr. 10', 'Bucuresti', '111110', 'Romania', 19);
+INSERT INTO public.clienti(
+	codclient, numeclient, prenumeclient, telefon, adresa, localitate, codpostal, tara, angajatraspunzator)
+	VALUES (11, 'Pop', 'Vlad', '0754444222', 'Strada Violet Nr. 11', 'Timisoara', '111111', 'Romania', 20);
+INSERT INTO public.clienti(
+	codclient, numeclient, prenumeclient, telefon, adresa, localitate, codpostal, tara, angajatraspunzator)
+	VALUES (12, 'Nita', 'George', '0754555222', 'Strada Alba Nr. 12', 'Cluj-Napoca', '111112', 'Romania', 21);
+INSERT INTO public.clienti(
+	codclient, numeclient, prenumeclient, telefon, adresa, localitate, codpostal, tara, angajatraspunzator)
+	VALUES (13, 'Barbu', 'Codrin', '0754666222', 'Strada Gri Nr. 13', 'Constanta', '111113', 'Romania', 9);
+INSERT INTO public.clienti(
+	codclient, numeclient, prenumeclient, telefon, adresa, localitate, codpostal, tara, angajatraspunzator)
+	VALUES (14, 'Dinu', 'Cosmin', '0754777222', 'Strada Albastra Nr. 14', 'Vaslui', '111114', 'Romania', 10);
+INSERT INTO Clienti (CodClient, NumeClient, PrenumeClient, Telefon, Adresa, Localitate, CodPostal, Tara, AngajatRaspunzator) VALUES (15, 'Spinu','Stefan',0732128300,'Strada Florilor 20','Bucuresti', 324010, 'Romania', 11);
+
+INSERT INTO Clienti (CodClient, NumeClient, PrenumeClient, Telefon, Adresa, Localitate, CodPostal, Tara, AngajatRaspunzator) VALUES (16, 'Colegu','Petronela',0762128630,'Stradela Iuliu Maniu 11','Bucuresti', 324016, 'Romania', 12);
+
+INSERT INTO Clienti (CodClient, NumeClient, PrenumeClient, Telefon, Adresa, Localitate, CodPostal, Tara, AngajatRaspunzator) VALUES (17, 'Savin','Robert',0752175326,'Bld. Tudor Vladimirescu 107','Iasi', 700720, 'Romania', 13);
+
+INSERT INTO Clienti (CodClient, NumeClient, PrenumeClient, Telefon, Adresa, Localitate, CodPostal, Tara, AngajatRaspunzator) VALUES (18, 'Postavaru','Dragos',0778625374,'Strada Florilor 91','Bucuresti', 324010, 'Romania', 14);
+
+INSERT INTO Clienti (CodClient, NumeClient, PrenumeClient, Telefon, Adresa, Localitate, CodPostal, Tara, AngajatRaspunzator) VALUES (19, 'Munteanu','Valentin',0739193380,'Strada Rozelor 18','Timisoara', 394102, 'Romania', 16);
+
+INSERT INTO Clienti (CodClient, NumeClient, PrenumeClient, Telefon, Adresa, Localitate, CodPostal, Tara, AngajatRaspunzator) VALUES (20, 'Spaclu','Lavinia',0721394059, 'Bld. Stefan cel Mare 81','Oradea', 982103, 'Romania', 17);
+
+INSERT INTO Clienti (CodClient, NumeClient, PrenumeClient, Telefon, Adresa, Localitate, CodPostal, Tara, AngajatRaspunzator) VALUES (21, 'Bujor','Stefan',0742422710,'Strada Vasile Alecsandri 12','Focsani', 320010, 'Romania', 18);
+
+INSERT INTO Clienti (CodClient,NumeClient, PrenumeClient, Telefon, Adresa, Localitate, CodPostal,Tara,AngajatRaspunzator) VALUES (23,'Lungu', 'Gina', 0764538760 ,'Str Principala','Onesti',601081,'Romania',9);
+INSERT INTO Facturi (IdFactura,CodClient,NumarCard, DataFacturare) VALUES (1,1,123411,'2021/03/23');
+INSERT INTO Facturi (IdFactura,CodClient,NumarCard, DataFacturare) VALUES (2,1,123522,'2021/03/24');
+INSERT INTO Facturi (IdFactura,CodClient,NumarCard, DataFacturare) VALUES (3,8,123633,'2021/04/11');
+INSERT INTO Facturi (IdFactura,CodClient,NumarCard, DataFacturare) VALUES (4,1,123744,'2021/04/21');
+INSERT INTO Facturi (IdFactura,CodClient,NumarCard, DataFacturare) VALUES (5,8,123855,'2021/03/22');
+INSERT INTO Facturi (IdFactura,CodClient,NumarCard, DataFacturare) VALUES (6,1,123966,'2021/04/23');
+INSERT INTO Facturi (IdFactura,CodClient,NumarCard, DataFacturare) VALUES (7,1,123377,'2021/03/25');
+INSERT INTO public.facturi(
+	idfactura, codclient, numarcard, datafacturare)
+	VALUES (8, 8, 888888, '2012-06-03');
+INSERT INTO public.facturi(
+	idfactura, codclient, numarcard, datafacturare)
+	VALUES (9, 9, 999999, '2013-06-04');
+INSERT INTO public.facturi(
+	idfactura, codclient, numarcard, datafacturare)
+	VALUES (10, 10, 101010, '2014-06-05');
+INSERT INTO public.facturi(
+	idfactura, codclient, numarcard, datafacturare)
+	VALUES (11, 11, 111111, '2015-06-06');
+INSERT INTO public.facturi(
+	idfactura, codclient, numarcard, datafacturare)
+	VALUES (12, 12, 121212, '2016-06-07');
+INSERT INTO public.facturi(
+	idfactura, codclient, numarcard, datafacturare)
+	VALUES (13, 13, 131313, '2017-06-08');
+INSERT INTO public.facturi(
+	idfactura, codclient, numarcard, datafacturare)
+	VALUES (14, 14, 141414, '2018-06-09');
+INSERT INTO Facturi (CodClient, IdFactura, NumarCard, DataFacturare) VALUES (15, 15, 918232, '2021-01-21');
+
+INSERT INTO Facturi (CodClient, IdFactura, NumarCard, DataFacturare) VALUES (16, 16, 231663, '2021-01-26');
+
+INSERT INTO Facturi (CodClient, IdFactura, NumarCard, DataFacturare) VALUES (17, 17, 528272, '2021-01-30');
+
+INSERT INTO Facturi (CodClient, IdFactura, NumarCard, DataFacturare) VALUES (18, 18, 210003, '2021-02-08');
+
+INSERT INTO Facturi (CodClient, IdFactura, NumarCard, DataFacturare) VALUES (19, 19, 618232, '2021-02-21');
+
+INSERT INTO Facturi (CodClient, IdFactura, NumarCard, DataFacturare) VALUES (20, 20, 419232, '2021-03-16');
+
+INSERT INTO Facturi (CodClient, IdFactura, NumarCard, DataFacturare) VALUES (21, 21, 231555, '2021-04-28');
+
+INSERT INTO Facturi (IdFactura,CodClient,NumarCard, DataFacturare) VALUES (24,23,123611,'2021/03/23');
+
+INSERT INTO Comenzi (NrComanda,DataComanda,Status,IdFactura) VALUES (1001,'2021/03/23','inregistrat',1);
+INSERT INTO Comenzi (NrComanda,DataComanda,Status,IdFactura) VALUES (1002,'2021/03/24','inregistrat',2);
+INSERT INTO Comenzi (NrComanda,DataComanda,Status,IdFactura) VALUES (1003,'2021/04/11','inregistrat',3);
+INSERT INTO Comenzi (NrComanda,DataComanda,Status,IdFactura) VALUES (1004,'2021/04/21','inregistrat',4);
+INSERT INTO Comenzi (NrComanda,DataComanda,Status,IdFactura) VALUES (1005,'2021/03/22','inregistrat',5);
+INSERT INTO Comenzi (NrComanda,DataComanda,Status,IdFactura) VALUES (1006,'2021/04/23','inregistrat',6);
+INSERT INTO Comenzi (NrComanda,DataComanda,Status,IdFactura) VALUES (1007,'2021/03/25','inregistrat',7);
+INSERT INTO public.comenzi(
+	nrcomanda, datacomanda, status, idfactura)
+	VALUES (1008, '2012-06-03', 'Livrata', 8);
+INSERT INTO public.comenzi(
+	nrcomanda, datacomanda, status, idfactura)
+	VALUES (1009,'2013-06-04' , 'Livrata', 9);
+INSERT INTO public.comenzi(
+	nrcomanda, datacomanda, status, idfactura)
+	VALUES (1010, '2014-06-05', 'Livrata', 10);
+INSERT INTO public.comenzi(
+	nrcomanda, datacomanda, status, idfactura)
+	VALUES (1011, '2015-06-06', 'Livrata', 11);
+INSERT INTO public.comenzi(
+	nrcomanda, datacomanda, status, idfactura)
+	VALUES (1012, '2016-06-07', 'Livrata', 12);
+INSERT INTO public.comenzi(
+	nrcomanda, datacomanda, status, idfactura)
+	VALUES (1013, '2017-06-08', 'Livrata', 13);
+INSERT INTO public.comenzi(
+	nrcomanda, datacomanda, status, idfactura)
+	VALUES (1014, '2018-06-09', 'Livrata', 14);
+INSERT INTO Comenzi (NrComanda,DataComanda,Status,IdFactura) VALUES (1015,'2021-01-21','inregistrat',15);
+
+INSERT INTO Comenzi (NrComanda,DataComanda,Status,IdFactura) VALUES (1016,'2021-01-26','inregistrat',16);
+
+INSERT INTO Comenzi (NrComanda,DataComanda,Status,IdFactura) VALUES (1017,'2021-01-30','inregistrat',17);
+
+INSERT INTO Comenzi (NrComanda,DataComanda,Status,IdFactura) VALUES (1018,'2021-02-08','inregistrat',18);
+
+INSERT INTO Comenzi (NrComanda,DataComanda,Status,IdFactura) VALUES (1019,'2021-02-21','inregistrat',19);
+
+INSERT INTO Comenzi (NrComanda,DataComanda,Status,IdFactura) VALUES (1020,'2021-03-16','inregistrat',20);
+
+INSERT INTO Comenzi (NrComanda,DataComanda,Status,IdFactura) VALUES (1021,'2021-04-28','inregistrat',21);
+
+INSERT INTO Comenzi (NrComanda,DataComanda,Status,IdFactura) VALUES (1024,'2021-03-23','inregistrat',24);
+
+INSERT INTO Produse (CodProdus,NumeProdus,CategorieProdus,Furnizor,CantitateStoc,Pret) VALUES (01,'iPhone','Telefoane','Apple',100,3000);
+INSERT INTO Produse (CodProdus,NumeProdus,CategorieProdus,Furnizor,CantitateStoc,Pret) VALUES (02,'Crema de fata','Cosmetice','Vichy',100,93);
+INSERT INTO Produse (CodProdus,NumeProdus,CategorieProdus,Furnizor,CantitateStoc,Pret) VALUES (03,'Televizor','Televizoare','Samsung',80,1800);
+INSERT INTO Produse (CodProdus,NumeProdus,CategorieProdus,Furnizor,CantitateStoc,Pret) VALUES (04,'Tricou','Fashion','Puma',1000,150);
+INSERT INTO Produse (CodProdus,NumeProdus,CategorieProdus,Furnizor,CantitateStoc,Pret) VALUES (05,'Ciocolata','Alimente','Alexandros',100,10);
+INSERT INTO Produse (CodProdus,NumeProdus,CategorieProdus,Furnizor,CantitateStoc,Pret) VALUES (06,'Frigider','Electrocasnice','Bosch',100,3400);
+INSERT INTO Produse (CodProdus,NumeProdus,CategorieProdus,Furnizor,CantitateStoc,Pret) VALUES (07,'Blender','Electrocasnice','Philips',100,499);
+INSERT INTO public.produse(
+	codprodus, numeprodus, categorieprodus, furnizor, cantitatestoc, pret)
+	VALUES (8, 'Crema de branza Almette', 'Lactate', 'Almette', 22, 33);
+INSERT INTO public.produse(
+	codprodus, numeprodus, categorieprodus, furnizor, cantitatestoc, pret)
+	VALUES (9, 'Lapte Zuzu 1.8l','Lactate', 'Zuzu', 33, 44);
+INSERT INTO public.produse(
+	codprodus, numeprodus, categorieprodus, furnizor, cantitatestoc, pret)
+	VALUES (10, 'Iaurt grecesc Olympus', 'Lactate', 'Olympus', 44, 55);
+INSERT INTO public.produse(
+	codprodus, numeprodus, categorieprodus, furnizor, cantitatestoc, pret)
+	VALUES (11, 'Carte d`Or', 'Inghetata', 'Langnese', 66, 77);
+INSERT INTO public.produse(
+	codprodus, numeprodus, categorieprodus, furnizor, cantitatestoc, pret)
+	VALUES (12, 'Corso Tutti', 'Inghetata', 'Corso', 88, 99);
+INSERT INTO public.produse(
+	codprodus, numeprodus, categorieprodus, furnizor, cantitatestoc, pret)
+	VALUES (13, 'Betty Blue', 'Inghetata', 'Betty Ice', 99, 111);
+INSERT INTO public.produse(
+	codprodus, numeprodus, categorieprodus, furnizor, cantitatestoc, pret)
+	VALUES (14, 'Ben & Jerrys cu aroma de caramel', 'Inghetata', 'Ben & Jerrys', 111, 222);
+INSERT INTO Produse (CodProdus,NumeProdus,CategorieProdus,Furnizor,CantitateStoc,Pret) VALUES (15,'Parfum','Parfumuri','Burberry',100,65);
+
+INSERT INTO Produse (CodProdus,NumeProdus,CategorieProdus,Furnizor,CantitateStoc,Pret) VALUES (16,'Ceas inteligent','Electronice','Xiaomi',100,190);
+
+INSERT INTO Produse (CodProdus,NumeProdus,CategorieProdus,Furnizor,CantitateStoc,Pret) VALUES (17,'Telefon','Electronice','Nokia',300,261);
+
+INSERT INTO Produse (CodProdus,NumeProdus,CategorieProdus,Furnizor,CantitateStoc,Pret) VALUES (18,'Televizor','Electronice','LG',50,1200);
+
+INSERT INTO Produse (CodProdus,NumeProdus,CategorieProdus,Furnizor,CantitateStoc,Pret) VALUES (19,'Telefon mobil','Electronice','OnePlus',100,3100);
+
+INSERT INTO Produse (CodProdus,NumeProdus,CategorieProdus,Furnizor,CantitateStoc,Pret) VALUES (20,'Jacheta','Fashion','Moncler',10,4400);
+
+INSERT INTO Produse (CodProdus,NumeProdus,CategorieProdus,Furnizor,CantitateStoc,Pret) VALUES (21,'Aspirator','Electrocasnice','Philips',150,199);
+
+
+INSERT INTO DetaliiComanda (NrComanda,CodProdus,Cantitate,PretBucata) VALUES (1001,02,50,93);
+INSERT INTO DetaliiComanda (NrComanda,CodProdus,Cantitate,PretBucata) VALUES (1002,03,40,1800);
+INSERT INTO DetaliiComanda (NrComanda,CodProdus,Cantitate,PretBucata) VALUES (1003,04,500,150);
+INSERT INTO DetaliiComanda (NrComanda,CodProdus,Cantitate,PretBucata) VALUES (1004,05,50,10);
+INSERT INTO DetaliiComanda (NrComanda,CodProdus,Cantitate,PretBucata) VALUES (1005,06,50,3400);
+INSERT INTO DetaliiComanda (NrComanda,CodProdus,Cantitate,PretBucata) VALUES (1006,07,50,499);
+INSERT INTO DetaliiComanda (NrComanda,CodProdus,Cantitate,PretBucata) VALUES (1007,01,50,3000);
+INSERT INTO public.detaliicomanda(
+	nrcomanda, codprodus, cantitate, pretbucata)
+	VALUES (1008, 8, 11, 33);
+INSERT INTO public.detaliicomanda(
+	nrcomanda, codprodus, cantitate, pretbucata)
+	VALUES (1009, 9, 22, 44);
+INSERT INTO public.detaliicomanda(
+	nrcomanda, codprodus, cantitate, pretbucata)
+	VALUES (1010, 10, 33, 55);
+INSERT INTO public.detaliicomanda(
+	nrcomanda, codprodus, cantitate, pretbucata)
+	VALUES (1011, 11, 44, 77);
+INSERT INTO public.detaliicomanda(
+	nrcomanda, codprodus, cantitate, pretbucata)
+	VALUES (1012, 12, 55, 99);
+INSERT INTO public.detaliicomanda(
+	nrcomanda, codprodus, cantitate, pretbucata)
+	VALUES (1013, 13, 66, 111);
+INSERT INTO public.detaliicomanda(
+	nrcomanda, codprodus, cantitate, pretbucata)
+	VALUES (1014, 14, 77, 222);
+INSERT INTO DetaliiComanda (NrComanda,CodProdus,Cantitate,PretBucata) VALUES (1015,15,50,65);
+
+INSERT INTO DetaliiComanda (NrComanda,CodProdus,Cantitate,PretBucata) VALUES (1016,16,50,190);
+
+INSERT INTO DetaliiComanda (NrComanda,CodProdus,Cantitate,PretBucata) VALUES (1017,17,150,261);
+
+INSERT INTO DetaliiComanda (NrComanda,CodProdus,Cantitate,PretBucata) VALUES (1018,18,25,1200);
+
+INSERT INTO DetaliiComanda (NrComanda,CodProdus,Cantitate,PretBucata) VALUES (1019,19,50,3100);
+
+INSERT INTO DetaliiComanda (NrComanda,CodProdus,Cantitate,PretBucata) VALUES (1020,20,5,4400);
+
+INSERT INTO DetaliiComanda (NrComanda,CodProdus,Cantitate,PretBucata) VALUES (1021,21,150,199);
+
+INSERT INTO DetaliiComanda (NrComanda,CodProdus,Cantitate,PretBucata) VALUES (1024,01,150,199);
+	
+--Roberto Mantale--
+--1) Care sunt clientii care au cumparat telefoane si cosmetice?
+Select c.numeclient, c.prenumeclient
+From clienti c  inner join facturi f on c.codclient = f.codclient
+				inner join comenzi co on co.idfactura = f.idfactura
+				inner join detaliicomanda dc on co.nrcomanda = dc.nrcomanda
+				inner join produse p on p.codprodus = dc.codprodus
+Where p.categorieprodus = 'Telefoane' 
+INTERSECT
+Select c.numeclient, c.prenumeclient
+From clienti c  inner join facturi f on c.codclient = f.codclient
+				inner join comenzi co on co.idfactura = f.idfactura
+				inner join detaliicomanda dc on co.nrcomanda = dc.nrcomanda
+				inner join produse p on p.codprodus = dc.codprodus
+Where p.categorieprodus = 'Cosmetice';
+
+--2) Care este pretul mediu al electrocasnicelor cumparate de Lupu Vasile?
+Select  Avg (p.pret)
+From produse p 	inner join detaliicomanda dc on p.codprodus = dc.codprodus
+				inner join comenzi co on co.nrcomanda = dc.nrcomanda
+				inner join facturi f on co.idfactura = f.idfactura
+				inner join clienti c on c.codclient = f.codclient				
+Where p.categorieprodus = 'Electrocasnice' and c.numeclient = 'Lupu'and c.prenumeclient = 'Vasile';
+
+
+--3) Care sunt localitatile cu minim 2 clienti?
+Select Distinct localitate
+from clienti
+Where localitate in (
+select localitate
+from clienti
+Group by localitate
+Having count  (localitate)>=2)
+
+--4) Afisati top 3 categorii de produse cu cele mai multe vanzari
+select p.categorieprodus, dc.cantitate * dc.pretbucata as valoare_vanzari
+from produse p inner join detaliicomanda dc on p.codprodus = dc.codprodus
+order by valoare_vanzari desc
+limit 3
+
+
+--Japaila Ionela--
+1) Care sunt clientii cu o valoare totala a vanzarilor>1000
+SOLUTIE SQL
+
+Select C.CodClient, NumeClient, PrenumeClient, SUM(cantitate*PretBucata)AS ValoareTotala
+From Clienti C INNER JOIN Facturi F ON C.CodClient=F.CodClient
+               INNER JOIN Comenzi CO ON F.IdFactura=CO.IdFactura
+			   INNER JOIN DetaliiComanda D ON CO.NrComanda=D.NrComanda
+Group By C.CodClient, NumeClient,PrenumeClient
+HAVING SUM(cantitate*PretBucata)>1000
+Order By ValoareTotala DESC
+
+
+2) Care sunt zilele in care s-au vandut produsele cu codul 1 si 2?
+SOLUTIE SQL
+
+Select CP1.DataFacturare
+From(Select DataFacturare
+	From Produse P INNER JOIN DetaliiComanda DC ON P.CodProdus=DC.CodPRodus
+	               INNER JOIN Comenzi C ON DC.NrComanda=C.NrComanda
+	               INNER JOIN Facturi F ON C.IdFactura=F.IdFactura
+	               WHERE P.CodProdus=01) CP1
+INNER JOIN (Select DataFacturare
+	From Produse P INNER JOIN DetaliiComanda DC ON P.CodProdus=DC.CodPRodus
+	               INNER JOIN Comenzi C ON DC.NrComanda=C.NrComanda
+	               INNER JOIN Facturi F ON C.IdFactura=F.IdFactura
+	               WHERE P.CodProdus=02) CP2
+ON CP1.DataFacturare=CP2.DataFacturare
+
+3) Care sunt clientii care au cumparat macar aceleasi produse ca si clientul Lupu Vasile?
+SOLUTIE SQL
+
+WITH
+Vanzari AS (select  NumeProdus
+	  From Clienti CL Inner Join Facturi F ON CL.CodClient=F.CodClient
+	                  INNER JOIN Comenzi C ON F.IdFactura=C.IdFactura
+	                  INNER JOIN DetaliiComanda DC ON C.NrComanda=DC.NrComanda
+			          INNER JOIN Produse P ON DC.CodProdus=P.CodProdus
+	  WHERE NumeClient='Lupu' AND PrenumeClient='Vasile'),
+common_v As( select NumeClient, PrenumeClient, P.NumeProdus
+	  From Clienti CL Inner Join Facturi F ON CL.CodClient=F.CodClient
+	                  INNER JOIN Comenzi C ON F.IdFactura=C.IdFactura
+	                  INNER JOIN DetaliiComanda DC ON C.NrComanda=DC.NrComanda
+			          INNER JOIN Produse P ON DC.CodProdus=P.CodProdus
+		  WHERE NumeProdus IN (Select NumeProdus FROM Vanzari)
+	)		   
+Select NumeClient,PrenumeClient, Count(*)
+FROM common_v
+GROUP BY NumeClient,PrenumeClient
+HAVING COUNT(*)=3
+ORDER BY NumeClient,Prenumeclient
+
+4) Afisati nivelul ierarhic al fiecarui angajat începând cu 8 
+SOLUTIE SQL
+
+WITH RECURSIVE ierarhie (CodAngajat, Nume, Prenume,Functie,
+		AreCaSef, nivel_ierarhic) AS (
+	SELECT CodAngajat, Nume, Prenume,Functie, AreCaSef,
+		0 AS nivel_ierarhic	
+	FROM Angajati
+	Where AreCaSef=8
+UNION ALL
+ 	SELECT  a.CodAngajat,a.Nume, a.Prenume,a.Functie, a.AreCaSef,
+		nivel_ierarhic - 1
+		
+ 	FROM Angajati a INNER JOIN ierarhie i
+		ON a.AreCaSef = i.CodAngajat  
+)
+SELECT *
+FROM ierarhie
+ORDER BY nivel_ierarhic DESC	
+
+
+
+
+	
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
